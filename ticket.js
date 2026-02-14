@@ -26,7 +26,17 @@ if (height <= 100) {
 }
 
 // 3. แสดงผลลัพธ์ผ่าน console.log
-console.log(`ส่วนสูง ${height} ซม. / มีคูปอง: ${hasCoupon} -> ราคาค่าเข้า: ${price} บาท`);
+ // console.log(`ส่วนสูง ${height} ซม. / มีคูปอง: ${hasCoupon} -> ราคาค่าเข้า: ${price} บาท`);
+
+        // 3. รวมข้อความผลลัพธ์
+        const resultText = `ส่วนสูง ${height} ซม. / มีคูปอง: ${hasCoupon} -> ราคาค่าเข้า: ${price} บาท`;
+
+        // 4. แสดงผลลัพธ์ผ่าน console.log (ตามเดิม)
+        console.log(resultText);
+
+        // 5. แสดงผลลัพธ์ที่หน้าจอ (เพิ่มเติม)
+        // เข้าถึง Element ด้วย ID แล้วเปลี่ยนข้อความภายใน
+        document.getElementById("screen-output").textContent = resultText;
 
 /**
  * สรุปตรรกะที่ใช้:

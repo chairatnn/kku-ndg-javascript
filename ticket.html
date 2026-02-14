@@ -1,34 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ระบบคำนวณราคาตั๋ว - Amusement Park</title>
-    
-    <!-- เชื่อมต่อไฟล์ CSS ภายนอก (บทเรียนที่ 05) -->
-    <link rel="stylesheet" href="ticket.css">
-    
-    <!-- Google Fonts: Sarabun -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
-</head>
-<body>
 
+    <!-- เชื่อมต่อไฟล์ CSS ภายนอก (บทเรียนที่ 05) -->
+    <link rel="stylesheet" href="ticket.css" />
+
+    <!-- Google Fonts: Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <div class="container">
-        <div class="card">
-            <div class="icon">🎡</div>
-            <h1>Amusement Park</h1>
-            <p>ระบบคำนวณราคาตั๋วอัตโนมัติ</p>
-            <hr>
-            <div class="instruction">
-                <p>กรุณาตรวจสอบราคาที่คำนวณได้ในช่อง <b>Console</b></p>
-                <code>กด F12 > เลือกแถบ Console</code>
-            </div>
+      <div class="card">
+        <div class="icon">🎡</div>
+        <h1>Amusement Park</h1>
+        <p>ระบบคำนวณราคาตั๋วอัตโนมัติ</p>
+        <hr />
+        <!-- ส่วนแสดงผลบนหน้าจอ -->
+        <div
+          class="bg-gray-900 rounded-2xl p-6 mb-6 shadow-inner border-2 border-gray-800"
+        >
+          <p
+            class="text-blue-400 font-mono text-xs mb-2 uppercase tracking-widest"
+          >
+            Output Window:
+          </p>
+          <div
+            id="screen-output"
+            class="text-white font-bold text-lg leading-relaxed break-words italic"
+          >
+            <!-- ข้อความจะมาปรากฏที่นี่ -->
+            กำลังคำนวณ...
+          </div>
         </div>
+        <div class="instruction">
+          <p>สามารถตรวจสอบราคาที่คำนวณได้ในช่อง <b>Console</b></p>
+          <code>กด F12 > เลือกแถบ Console</code>
+        </div>
+      </div>
     </div>
 
     <!-- เชื่อมต่อไฟล์ JavaScript ภายนอก (บทเรียนที่ 09) -->
     <script src="ticket.js"></script>
-</body>
+  </body>
 </html>
