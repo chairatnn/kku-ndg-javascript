@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Events Workshop</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            padding: 20px;
+            color: #334155;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #3b82f6;
+        }
+        h2 { margin-top: 0; color: #1e293b; font-size: 1.25rem; }
+        .interactive-area {
+            width: 100%;
+            height: 100px;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+        .log-box {
+            background-color: #0f172a;
+            color: #10b981;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            height: 80px;
+            overflow-y: auto;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+        button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background-color: #2563eb; }
+        .form-card { border-top-color: #10b981; }
+        .keyboard-card { border-top-color: #f59e0b; }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align: center;">🔬 JavaScript Events Lab</h1>
+
+    <div class="grid-container">
+        <!-- 1. Mouse Events Section -->
+        <div class="card">
+            <h2>🖱️ Mouse Events</h2>
+            <div id="mouseArea" class="interactive-area">
+                ลองเล่นกับเมาส์ตรงนี้
+            </div>
+            <div id="mouseLog" class="log-box">รอรับคำสั่งเมาส์...</div>
+        </div>
+
+        <!-- 2. Keyboard Events Section -->
+        <div class="card keyboard-card">
+            <h2>⌨️ Keyboard Events</h2>
+            <input type="text" id="keyInput" placeholder="พิมพ์อะไรก็ได้ตรงนี้...">
+            <div id="keyLog" class="log-box">รอรับคำสั่งคีย์บอร์ด...</div>
+        </div>
+
+        <!-- 3. Form & Input Events Section -->
+        <div class="card form-card">
+            <h2>📝 Form & Input Events</h2>
+            <form id="testForm">
+                <input type="text" id="realtimeInput" placeholder="ทดสอบ input event...">
+                <select id="selectField">
+                    <option value="">เลือกหมวดหมู่ (Change Event)</option>
+                    <option value="fruit">ผลไม้</option>
+                    <option value="tech">เทคโนโลยี</option>
+                </select>
+                <button type="submit">ส่งฟอร์ม (Submit Event)</button>
+            </form>
+            <div id="formLog" class="log-box">รอรับคำสั่งฟอร์ม...</div>
+        </div>
+    </div>
+
+    <script>
+        // ฟังก์ชันช่วยเขียน Log
+        function logTo(elementId, message) {
+            const el = document.getElementById(elementId);
+            const time = new Date().toLocaleTimeString();
+            el.innerHTML = `[${time}] ${message}<br>` + el.innerHTML;
+        }
+
+        // --- Mouse Events ---
+        const mouseArea = document.getElementById('mouseArea');
+        
+        mouseArea.addEventListener('click', () => {
+            mouseArea.style.backgroundColor = '#93c5fd';
+            logTo('mouseLog', 'click: คลิกเมาส์แล้ว!');
+        });
+
+        mouseArea.addEventListener('dblclick', () => {
+            mouseArea.style.backgroundColor = '#60a5fa';
+            logTo('mouseLog', 'dblclick: ดับเบิ้ลคลิก!');
+        });
+
+        mouseArea.addEventListener('mouseenter', () => {
+            mouseArea.style.border = '2px solid #3b82f6';
+            logTo('mouseLog', 'mouseenter: เมาส์เข้ามาแล้ว');
+        });
+
+        mouseArea.addEventListener('mouseleave', () => {
+            mouseArea.style.border = 'none';
+            mouseArea.style.backgroundColor = '#e2e8f0';
+            logTo('mouseLog', 'mouseleave: เมาส์ออกไปแล้ว');
+        });
+
+        // --- Keyboard Events ---
+        const keyInput = document.getElementById('keyInput');
+
+        keyInput.addEventListener('keydown', (e) => {
+            logTo('keyboard-card', `keydown: กดปุ่ม ${e.key}`); // ส่งผิดไอดีเพื่อความสนุก แต่ในนี้ใช้ keyLog
+            logTo('keyLog', `keydown: กดปุ่ม ${e.key}`);
+        });
+
+        keyInput.addEventListener('keyup', (e) => {
+            logTo('keyLog', `keyup: ปล่อยปุ่ม ${e.key}`);
+        });
+
+        // --- Form & Input Events ---
+        const testForm = document.getElementById('testForm');
+        const realtimeInput = document.getElementById('realtimeInput');
+        const selectField = document.getElementById('selectField');
+
+        // input: ทำงานทันทีที่พิมพ์
+        realtimeInput.addEventListener('input', (e) => {
+            logTo('formLog', `input: กำลังพิมพ์... (${e.target.value})`);
+        });
+
+        // change: ทำงานเมื่อเปลี่ยนค่าเสร็จ (เช่น เลือก dropdown)
+        selectField.addEventListener('change', (e) => {
+            logTo('formLog', `change: เปลี่ยนค่าเป็น ${e.target.value}`);
+        });
+
+        // submit: เมื่อส่งฟอร์ม
+        testForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // สำคัญ! กันหน้าเว็บรีเฟรช
+            logTo('formLog', 'submit: ส่งฟอร์มเรียบร้อย (e.preventDefault() ทำงาน)');
+        });
+
+    </script>
+</body>
+</html>

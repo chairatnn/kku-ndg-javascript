@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมุดเยี่ยมชม (Guestbook) - ระบบลบข้อความ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h2 { text-align: center; color: #1c1e21; margin-bottom: 25px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #4b4f56; }
+        
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        textarea { height: 80px; resize: vertical; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover { background-color: #166fe5; }
+
+        hr { border: 0; border-top: 1px solid #eee; margin: 30px 0; }
+
+        #guestList { display: flex; flex-direction: column; gap: 15px; }
+        
+        /* สไตล์ของกล่องคอมเมนต์ */
+        .comment-card {
+            background: #f7f8fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #1877f2;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+
+        .comment-name { font-weight: bold; color: #1c1e21; }
+        
+        /* ปุ่มลบสไตล์มินิมอล */
+        .delete-btn {
+            background: #ffeded;
+            color: #ff4d4f;
+            border: 1px solid #ffccc7;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .delete-btn:hover {
+            background: #ff4d4f;
+            color: white;
+        }
+
+        .comment-msg { color: #4b4f56; line-height: 1.4; word-wrap: break-word; margin: 5px 0; }
+        .comment-date { color: #90949c; font-size: 11px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>📝 สมุดเยี่ยมชม</h2>
+        
+        <form id="visitorForm">
+            <div class="form-group">
+                <label for="name">ชื่อของคุณ</label>
+                <input type="text" id="nameInput" placeholder="กรอกชื่อที่นี่...">
+            </div>
+            <div class="form-group">
+                <label for="message">ข้อความ</label>
+                <textarea id="msgInput" placeholder="พิมพ์ความความประทับใจ..."></textarea>
+            </div>
+            <button type="submit" class="submit-btn">ส่งข้อความ</button>
+        </form>
+
+        <hr>
+
+        <div id="guestList">
+            <!-- รายการคอมเมนต์จะปรากฏที่นี่ -->
+        </div>
+    </div>
+
+    <script>
+        const visitorForm = document.getElementById('visitorForm');
+        const nameInput = document.getElementById('nameInput');
+        const msgInput = document.getElementById('msgInput');
+        const guestList = document.getElementById('guestList');
+
+        visitorForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nameValue = nameInput.value.trim();
+            const msgValue = msgInput.value.trim();
+
+            if (nameValue === "" || msgValue === "") {
+                alert("กรุณากรอกข้อมูลให้ครบถ้วนครับ");
+                return;
+            }
+
+            const newComment = {
+                name: nameValue,
+                msg: msgValue,
+                date: new Date().toLocaleString()
+            };
+
+            // สร้าง HTML และเพิ่มปุ่มลบพร้อมคำสั่ง closest().remove()
+            const commentHTML = `
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <span class="comment-name">👤 ${newComment.name}</span>
+                        <button class="delete-btn" onclick="deleteComment(this)">ลบ</button>
+                    </div>
+                    <p class="comment-msg">${newComment.msg}</p>
+                    <span class="comment-date">ส่งเมื่อ: ${newComment.date}</span>
+                </div>
+            `;
+
+            // เพิ่มไว้ด้านบนสุด
+            guestList.insertAdjacentHTML('afterbegin', commentHTML);
+
+            // ล้างค่าในฟอร์ม
+            visitorForm.reset();
+            nameInput.focus();
+        });
+
+        // ฟังก์ชันแยกสำหรับลบข้อความเพื่อความสะอาดของโค้ด
+        function deleteComment(btn) {
+            if(confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อความนี้?")) {
+                const card = btn.closest('.comment-card');
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(20px)';
+                setTimeout(() => card.remove(), 300); // รอให้ Animation เล่นจบก่อนลบจริง
+            }
+        }
+    </script>
+
+</body>
+</html>

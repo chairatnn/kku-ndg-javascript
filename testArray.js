@@ -31,10 +31,13 @@ let scores = [45, 80, 60, 30, 90];
 let passed = scores.filter(s => s >= 50);
 console.log(passed); // [80, 60, 90]
 
-let users = ["Ant", "Bird", "Cat"];
+let users = ["Ant", "Bird", "Cat", "Boy"];
 // หาชื่อที่ขึ้นต้นด้วย B
 let result = users.find(u => u.startsWith("B"));
 console.log(result); // "Bird"
+// หาชื่อที่ขึ้นต้นด้วย B ทั้งหมด
+let result2 = users.filter(u => u.startsWith("B"));
+console.log(result2); // [ 'Bird', 'Boy' ]
 
 
 let label = [1500, 500, 3000, 800, 200];

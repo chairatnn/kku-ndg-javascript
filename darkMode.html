@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dark Mode Workshop</title>
+    <style>
+        /* พื้นฐานหน้าเว็บ */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* CSS สำหรับ Dark Mode */
+        .dark-mode-theme {
+            background-color: #222 !important;
+            color: #eee !important;
+        }
+        
+        .dark-mode-theme .card {
+            background-color: #333 !important;
+            color: #fff !important;
+            border-color: #555 !important;
+        }
+
+        .dark-mode-theme .bg-light {
+            background-color: #454545 !important;
+            color: #fff !important;              
+            border-color: #666 !important;       
+        }
+
+        /* ตกแต่ง UI เพิ่มเติม */
+        .card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            width: 300px;
+            text-align: center;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s active;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-main { background-color: #007bff; color: white; }
+        .btn-dark { background-color: #343a40; color: white; }
+    </style>
+  </head>
+  <body>
+    
+    <div class="card">
+      <h2>ยินดีต้อนรับ</h2>
+      <p>นี่คือตัวอย่างการทำ Dark Mode ด้วย JavaScript</p>
+      <div class="bg-light" style="padding: 10px; border-radius: 5px; margin-top: 10px;">
+        ส่วนนี้เป็นตัวอย่าง bg-light
+      </div>
+    </div>
+
+    <div class="flex-row">
+        <!-- เมื่อกดปุ่ม -> เรียกฟังก์ชัน changeColor() -->
+        <button class="btn-main" onclick="changeColor()">เปลี่ยนสีข้อความ</button>
+        
+        <!-- ปุ่ม Toggle Dark Mode -->
+        <button class="btn-dark" onclick="toggleDarkMode()">สลับโหมด มืด/สว่าง</button>
+    </div>
+
+    <script>
+        // ฟังก์ชันเปลี่ยนสีข้อความเล่นๆ
+        function changeColor() {
+            const colors = ['#ff5733', '#33ff57', '#3357ff', '#f333ff'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            document.querySelector('h2').style.color = randomColor;
+        }
+
+        // ฟังก์ชันหัวใจหลักสำหรับการสลับ Dark Mode
+        function toggleDarkMode() {
+            // ดึง element <body> มา
+            const body = document.body;
+            
+            // ใช้ .classList.toggle() เพื่อสลับคลาส (ถ้ามีให้ลบ ถ้าไม่มีให้เพิ่ม)
+            body.classList.toggle("dark-mode-theme");
+            
+            // (Optional) เก็บค่าไว้ใน LocalStorage เพื่อให้เวลา Refresh หน้าเว็บแล้วโหมดยังอยู่
+            if (body.classList.contains("dark-mode-theme")) {
+                localStorage.setItem("theme", "dark");
+            } else {
+                localStorage.setItem("theme", "light");
+            }
+        }
+
+        // ตรวจสอบสถานะเมื่อโหลดหน้าเว็บ
+        window.onload = function() {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.body.classList.add("dark-mode-theme");
+            }
+        };
+    </script>
+  </body>
+</html>

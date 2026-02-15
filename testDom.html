@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="testDom.js"></script>
+    <style>
+        /* CSS สำหรับ Workshop Dark Mode */
+        .dark-mode-theme {
+            background-color: #222 !important;
+            color: #eee !important;
+        }
+        .dark-mode-theme .card {
+            background-color: #333 !important;
+            color: #fff !important;
+            border-color: #555 !important;
+        }
+
+		.dark-mode-theme .bg-light {
+            background-color: #454545 !important;
+            color: #fff !important;              
+            border-color: #666 !important;       
+        }		
+
+		/* Style สำหรับจำลอง Console Result */
+        .console-result {
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            background-color: #f0f0f0;
+            border-left: 4px solid #aaa;
+            padding: 10px;
+            color: #333;
+        }		
+    </style>
+  </head>
+  <body>
+    <!-- 1. หัวข้อหลัก (มี ID) -->
+    <h1 id="title">Welcome</h1>
+
+    <!-- 2. รายการผลไม้ (มี Class เหมือนกันหลายตัว) -->
+    <ul>
+      <li class="fruit">Apple</li>
+      <li class="fruit">Banana</li>
+      <li class="fruit">Orange</li>
+    </ul>
+
+    <!-- เมื่อกดปุ่ม -> เรียกฟังก์ชัน changeColor() -->
+    <button onclick="changeColor()">กดฉันสิ</button>
+  </body>
+  </body>
+</html>

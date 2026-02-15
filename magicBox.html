@@ -1,0 +1,30 @@
+<!doctype html>
+
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Magic Box Evolution</title>
+    <!-- เชื่อมโยงไฟล์ CSS -->
+    <link rel="stylesheet" href="magicBox.css" />
+  </head>
+  <body>
+    <!-- ปุ่มสลับโหมดที่มุมบนขวา -->
+    <div class="theme-toggle-container">
+      <button id="themeBtn" onclick="toggleTheme()">🌙 Dark Mode</button>
+    </div>
+
+    <div class="container">
+      <!-- กล่องมหัศจรรย์ -->
+      <div id="box" class="shape-default">ร่างปกติ</div>
+
+      <!-- ปุ่มกดสำหรับสั่งแปลงร่างวนไป -->
+      <button onclick="transformBox()">แปลงร่างขั้นกว่า!</button>
+
+      <p id="statusText">สถานะ: กล่องสี่เหลี่ยม</p>
+    </div>
+
+    <!-- เชื่อมโยงไฟล์ JavaScript -->
+    <script src="magicBox.js"></script>
+  </body>
+</html>
