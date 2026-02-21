@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสภาพอากาศ Real-time</title>
+    <!-- ใช้ Bootstrap 5 สำหรับการตกแต่ง UI -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            min-height: screen;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .weather-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+        }
+        .update-btn {
+            background-color: #0d6efd;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+        .update-btn:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="weather-card text-center">
+        <!-- ส่วนแสดงผลลัพธ์ -->
+        <div id="weatherResult" class="mb-4">
+            <h6 class="text-muted text-uppercase fw-bold mb-1">Khonkaen, Thailand</h6>
+            <div class="display-3 fw-bold text-dark mb-0">
+                <span id="tempValue">--</span><span class="fs-1 text-muted">°C</span>
+            </div>
+            <p class="small text-muted mt-2 mb-0">อัปเดตล่าสุด: <span id="timeValue">--</span></p>
+        </div>
+
+        <!-- ปุ่มสำหรับโหลดข้อมูล -->
+        <button id="loadWeather" class="btn btn-primary update-btn w-100 fw-bold">
+            🔄 ดึงข้อมูลสภาพอากาศ
+        </button>
+        
+        <div id="errorMessage" class="text-danger small mt-2 hidden"></div>
+    </div>
+
+    <script>
+        const loadBtn = document.getElementById('loadWeather');
+        const tempElement = document.getElementById('tempValue');
+        const timeElement = document.getElementById('timeValue');
+        const errorElement = document.getElementById('errorMessage');
+
+        const API_URL = "https://api.open-meteo.com/v1/forecast?latitude=16.4322&longitude=102.8236&current_weather=true";
+
+        // ฟังก์ชันหลักสำหรับดึงข้อมูล
+        async function fetchWeather() {
+            try {
+                // แสดงสถานะกำลังโหลด
+                loadBtn.disabled = true;
+                loadBtn.innerText = "กำลังโหลด...";
+                errorElement.innerText = "";
+
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) throw new Error("ไม่สามารถติดต่อเซิร์ฟเวอร์ได้");
+
+                const data = await response.json();
+                
+                // ดึงข้อมูลอุณหภูมิและเวลา
+                const temp = data.current_weather.temperature;
+                const rawTime = data.current_weather.time;
+
+                // แปลงเวลาเป็นรูปแบบไทย (เพิ่ม Z เพื่อระบุเป็น UTC และแปลงเป็น Local Time)
+                const formattedTime = new Date(rawTime + "Z").toLocaleTimeString('th-TH', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                // แสดงผลใน HTML
+                tempElement.innerText = temp;
+                timeElement.innerText = formattedTime + " น.";
+
+            } catch (err) {
+                console.error(err);
+                errorElement.innerText = "เกิดข้อผิดพลาด: " + err.message;
+                tempElement.innerText = "--";
+                timeElement.innerText = "--";
+            } finally {
+                // คืนค่าปุ่มกลับมาปกติ
+                loadBtn.disabled = false;
+                loadBtn.innerText = "🔄 ดึงข้อมูลสภาพอากาศ";
+            }
+        }
+
+        // ดักจับการคลิกปุ่ม
+        loadBtn.addEventListener('click', fetchWeather);
+
+        // ดึงข้อมูลครั้งแรกเมื่อโหลดหน้าเว็บ
+        window.onload = fetchWeather;
+    </script>
+</body>
+</html>

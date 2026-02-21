@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบค้นหาพนักงาน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            🔎 ระบบค้นหาพนักงาน
+        </h2>
+
+        <form id="searchForm" class="space-y-4">
+            <div>
+                <label for="empId" class="block text-sm font-medium text-gray-700 mb-1">รหัสพนักงาน</label>
+                <input 
+                    type="text" 
+                    id="empId" 
+                    placeholder="กรอกรหัสพนักงาน (เช่น 101, 102)"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    required
+                >
+            </div>
+            <button 
+                type="submit" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+            >
+                ค้นหาข้อมูล
+            </button>
+        </form>
+
+        <!-- ส่วนแสดง Loading -->
+        <div id="loading" class="hidden mt-6 flex flex-col items-center">
+            <div class="loading-spinner"></div>
+            <p class="mt-2 text-sm text-gray-500">กำลังติดต่อฐานข้อมูล...</p>
+        </div>
+
+        <!-- ส่วนแสดงผลลัพธ์ -->
+        <div id="resultArea" class="mt-6"></div>
+    </div>
+
+    <script>
+        // --- 1. ฟังก์ชันจำลองผลลัพธ์จากเซิร์ฟเวอร์ ---
+        function findEmployeeInDB(id) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (id === "101") resolve({ id: 101, name: "Tony Stark", dept: "Engineering" });
+                    else if (id === "102") resolve({ id: 102, name: "Natasha Romanoff", dept: "Human Resources" });
+                    else reject("ไม่พบพนักงานรหัสนี้ในระบบ!"); // กรณี Error
+                }, 1500);
+            });
+        }
+
+        const searchForm = document.getElementById('searchForm');
+        const empIdInput = document.getElementById('empId');
+        const loading = document.getElementById('loading');
+        const resultArea = document.getElementById('resultArea');
+
+        // --- 2. ใช้ addEventListener ดักจับการส่งฟอร์ม ---
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // ป้องกันการรีเฟรชหน้าจอ
+
+            const id = empIdInput.value.trim();
+            
+            // ล้างข้อมูลหน้าจอก่อนเริ่มการค้นหาใหม่
+            resultArea.innerHTML = "";
+            loading.classList.remove('hidden');
+
+            // --- 3. สร้างฟังก์ชัน async/await และ try...catch ---
+            try {
+                // รอข้อมูลจาก Promise (จำลองการดึงจาก DB)
+                const employee = await findEmployeeInDB(id);
+
+                // --- 4. ใน try: ซ่อน Loading -> แสดงข้อมูลพนักงาน ---
+                loading.classList.add('hidden');
+                resultArea.innerHTML = `
+                    <div class="p-4 bg-green-50 border border-green-200 rounded-xl">
+                        <p class="text-green-800 font-bold text-lg">✅ พบข้อมูลพนักงาน</p>
+                        <div class="mt-2 text-gray-700 space-y-1">
+                            <p><strong>ID:</strong> ${employee.id}</p>
+                            <p><strong>Name:</strong> ${employee.name}</p>
+                            <p><strong>Department:</strong> ${employee.dept}</p>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                // --- 5. ใน catch: ซ่อน Loading -> แสดงข้อความ Error สีแดง ---
+                loading.classList.add('hidden');
+                resultArea.innerHTML = `
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-xl">
+                        <p class="text-red-600 font-bold">❌ Error:</p>
+                        <p class="text-red-500">${err}</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

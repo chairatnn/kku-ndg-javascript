@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมุดภาพโปเกมอนส่วนตัว</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
+        body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
+        .pokemon-card { transition: transform 0.3s ease; }
+        .pokemon-card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- ส่วนที่ 1: การค้นหาโปเกมอน -->
+        <div class="bg-white p-6 rounded-3xl shadow-lg">
+            <h2 class="text-2xl font-bold text-red-600 mb-6 flex items-center gap-2">
+                🔴 ค้นหาโปเกมอน
+            </h2>
+            
+            <div class="flex gap-2 mb-6">
+                <input 
+                    type="text" 
+                    id="pokemonInput" 
+                    placeholder="พิมพ์ชื่อภาษาอังกฤษ (เช่น pikachu)"
+                    class="flex-1 px-4 py-2 border-2 border-gray-100 rounded-xl focus:border-red-400 outline-none transition-all"
+                >
+                <button 
+                    onclick="searchPokemon()"
+                    class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-bold transition-colors"
+                >
+                    ค้นหา
+                </button>
+            </div>
+
+            <!-- พื้นที่แสดงผลการค้นหา -->
+            <div id="searchResult" class="min-h-[250px] flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-2xl p-4">
+                <p class="text-gray-400">กรุณาพิมพ์ชื่อโปเกมอนเพื่อเริ่มการสำรวจ</p>
+            </div>
+        </div>
+
+        <!-- ส่วนที่ 2: กระเป๋าเก็บโปเกมอน (LocalStorage) -->
+        <div class="bg-white p-6 rounded-3xl shadow-lg border-t-8 border-yellow-400">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                🎒 กระเป๋าของฉัน
+            </h2>
+            <ul id="favoritesList" class="space-y-2">
+                <!-- รายชื่อจาก localStorage จะมาแสดงที่นี่ -->
+            </ul>
+            <div id="emptyBagMsg" class="text-center py-10 text-gray-400 hidden">
+                ยังไม่มีโปเกมอนในกระเป๋า
+            </div>
+            <button 
+                onclick="clearBag()" 
+                class="mt-6 w-full text-xs text-gray-400 hover:text-red-500 transition-colors"
+            >
+                ล้างข้อมูลในกระเป๋าทั้งหมด
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const pokemonInput = document.getElementById('pokemonInput');
+        const searchResult = document.getElementById('searchResult');
+        const favoritesList = document.getElementById('favoritesList');
+        const emptyBagMsg = document.getElementById('emptyBagMsg');
+
+        // --- 1. ค้นหาโปเกมอนจาก API ---
+        async function searchPokemon() {
+            const name = pokemonInput.value.toLowerCase().trim();
+            if (!name) return;
+
+            searchResult.innerHTML = `<p class="text-blue-500 animate-pulse">กำลังค้นหา...</p>`;
+
+            try {
+                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+                
+                if (!response.ok) throw new Error("ไม่พบโปเกมอนที่ค้นหา");
+
+                const data = await response.json();
+                renderSearchResult(data);
+            } catch (err) {
+                searchResult.innerHTML = `<p class="text-red-500 font-bold">❌ ${err.message}</p>`;
+            }
+        }
+
+        // --- 2. แสดงผลข้อมูลโปเกมอนที่ค้นหาเจอ ---
+        function renderSearchResult(pokemon) {
+            searchResult.innerHTML = `
+                <div class="text-center pokemon-card">
+                    <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" class="w-32 h-32 mx-auto drop-shadow-md">
+                    <h3 class="text-xl font-bold capitalize text-gray-800 mb-4">${pokemon.name}</h3>
+                    <button 
+                        onclick="saveToBag('${pokemon.name}')"
+                        class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-2 px-8 rounded-full shadow-md transition-all"
+                    >
+                        บันทึกลงกระเป๋า
+                    </button>
+                </div>
+            `;
+        }
+
+        // --- 3. บันทึกข้อมูลลง localStorage ---
+        function saveToBag(name) {
+            // ดึงข้อมูลเก่า (ถ้าไม่มีให้สร้าง Array เปล่า)
+            let bag = JSON.parse(localStorage.getItem('myPokemonBag')) || [];
+            
+            // ป้องกันการบันทึกซ้ำ
+            if (bag.includes(name)) {
+                alert('คุณมีโปเกมอนตัวนี้อยู่ในกระเป๋าแล้ว!');
+                return;
+            }
+
+            // เพิ่มข้อมูลใหม่
+            bag.push(name);
+            
+            // เซฟกลับไปที่ localStorage
+            localStorage.setItem('myPokemonBag', JSON.stringify(bag));
+            
+            // อัปเดตรายการหน้าเว็บ
+            loadFavorites();
+        }
+
+        // --- 4. โหลดข้อมูลจาก localStorage มาแสดงผล ---
+        function loadFavorites() {
+            const bag = JSON.parse(localStorage.getItem('myPokemonBag')) || [];
+            
+            if (bag.length === 0) {
+                favoritesList.innerHTML = "";
+                emptyBagMsg.classList.remove('hidden');
+                return;
+            }
+
+            emptyBagMsg.classList.add('hidden');
+            favoritesList.innerHTML = bag.map((name, index) => `
+                <li class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 group">
+                    <span class="capitalize font-medium text-gray-700">#${index + 1} ${name}</span>
+                    <button onclick="removeFromBag('${name}')" class="text-gray-300 hover:text-red-500 transition-colors">
+                        ลบ
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        // ฟังก์ชันลบโปเกมอนบางตัว
+        function removeFromBag(name) {
+            let bag = JSON.parse(localStorage.getItem('myPokemonBag')) || [];
+            bag = bag.filter(item => item !== name);
+            localStorage.setItem('myPokemonBag', JSON.stringify(bag));
+            loadFavorites();
+        }
+
+        // ฟังก์ชันล้างกระเป๋า
+        function clearBag() {
+            if(confirm('ต้องการล้างรายชื่อทั้งหมดใช่หรือไม่?')) {
+                localStorage.removeItem('myPokemonBag');
+                loadFavorites();
+            }
+        }
+
+        // ให้ทำงานทันทีเมื่อเปิดเว็บ
+        window.onload = loadFavorites;
+
+        // รองรับการกด Enter ในช่องค้นหา
+        pokemonInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchPokemon();
+        });
+    </script>
+</body>
+</html>
